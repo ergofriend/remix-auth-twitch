@@ -2,11 +2,7 @@ import { createCookieSessionStorage } from "@remix-run/node";
 import fetchMock, { enableFetchMocks } from "jest-fetch-mock";
 
 import { TwitchStrategy } from "../src";
-import {
-  TwitchProfile,
-  TwitchStrategyOptions,
-  TwitchStrategyVerifyParams,
-} from "../build";
+import { TwitchStrategyOptions } from "../build";
 
 enableFetchMocks();
 
@@ -80,7 +76,7 @@ describe(TwitchStrategy, () => {
 
     let request = new Request("https://example.com/login");
 
-    fetchMock.mockIf(/oauth2\/authorize/, async (req) => {
+    fetchMock.mockIf(/oauth2\/authorize/, async () => {
       return {
         body: "",
         init: { status: 200 },
