@@ -1,38 +1,57 @@
-import { SessionStorage } from "@remix-run/server-runtime";
+import {
+  AppLoadContext,
+  json,
+  SessionStorage,
+} from "@remix-run/server-runtime";
 import {
   AuthenticateOptions,
   Strategy,
   StrategyVerifyCallback,
 } from "remix-auth";
+import {
+  authorize,
+  getAuthorizedParams,
+  getAuthorizedUser,
+  Profile,
+  tokenize,
+  TokenResult,
+} from "./twitch";
+import { isCallback } from "./util";
 
-/**
- * This interface declares what configuration the strategy needs from the
- * developer to correctly work.
- */
 export interface TwitchStrategyOptions {
-  something: "You may need";
+  clientId: string;
+  clientSecret: string;
+  callbackURL: string;
+  includeEmail?: boolean;
 }
 
-/**
- * This interface declares what the developer will receive from the strategy
- * to verify the user identity in their system.
- */
-export interface TwitchStrategyVerifyParams {
-  something: "Dev may need";
-}
+export type TwitchStrategyVerifyParams = TokenResult & {
+  profile: Profile;
+  context?: AppLoadContext;
+};
 
 export class TwitchStrategy<User> extends Strategy<
   User,
   TwitchStrategyVerifyParams
 > {
-  name = "change-me";
+  name = "twitch";
+
+  protected clientId: string;
+  protected clientSecret: string;
+  protected callbackURL: string;
+  protected includeEmail: boolean;
+
+  private csrfToken = "";
 
   constructor(
     options: TwitchStrategyOptions,
     verify: StrategyVerifyCallback<User, TwitchStrategyVerifyParams>
   ) {
     super(verify);
-    // do something with the options here
+    this.clientId = options.clientId;
+    this.clientSecret = options.clientSecret;
+    this.callbackURL = options.callbackURL;
+    this.includeEmail = options.includeEmail || false;
   }
 
   async authenticate(
@@ -40,13 +59,67 @@ export class TwitchStrategy<User> extends Strategy<
     sessionStorage: SessionStorage,
     options: AuthenticateOptions
   ): Promise<User> {
-    return await this.failure(
-      "Implement me!",
-      request,
-      sessionStorage,
-      options
+    const session = await sessionStorage.getSession(
+      request.headers.get("Cookie")
     );
-    // Uncomment me to do a success response
-    // this.success({} as User, request, sessionStorage, options);
+    const user: User | null = session.get(options.sessionKey) ?? null;
+    if (user) return this.success(user, request, sessionStorage, options);
+
+    // Step 1: Redirect Twitch Authentication Page
+    if (
+      !isCallback({
+        requestURL: request.url,
+        callbackURL: this.callbackURL,
+      })
+    ) {
+      this.csrfToken = "123";
+      throw authorize({
+        clientId: this.clientId,
+        callbackURL: this.callbackURL,
+        scopes: this.includeEmail ? ["user:read:email"] : [],
+        csrfToken: this.csrfToken,
+      });
+    }
+    const authorizedParams = getAuthorizedParams(request.url);
+    if (this.csrfToken !== authorizedParams.state)
+      throw json(
+        { message: "/authorize returned invalid CSRF Token" },
+        {
+          status: 401,
+        }
+      );
+    if (!authorizedParams.result.code || authorizedParams.error.error)
+      return await this.failure(
+        "Please authorize the app",
+        request,
+        sessionStorage,
+        options
+      );
+
+    // Step 2: Get Access Token
+    const token = await tokenize({
+      code: authorizedParams.result.code,
+      callbackURL: this.callbackURL,
+      clientId: this.clientId,
+      clientSecret: this.clientSecret,
+    });
+
+    // Step 3: Get Profile
+    const profile = await getAuthorizedUser({
+      clientId: this.clientId,
+      accessToken: token.access_token,
+    });
+
+    try {
+      const user = await this.verify({
+        ...token,
+        profile,
+        context: options.context,
+      });
+      return await this.success(user, request, sessionStorage, options);
+    } catch (error) {
+      const message = (error as Error).message;
+      return await this.failure(message, request, sessionStorage, options);
+    }
   }
 }
