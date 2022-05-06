@@ -19,3 +19,4 @@
 
 - @na2hiro [na2hiro/remix-auth-twitter: Remix Auth plugin for Twitter OAuth 1.0a](https://github.com/na2hiro/remix-auth-twitter)
 - @sergiodxa [sergiodxa/remix-auth-strategy-template: A template for creating a new Remix Auth strategy.](https://github.com/sergiodxa/remix-auth-strategy-template)
+- @FezVrasta [Firebase Twitch OAuth Flow (Cloud Functions implementation)](https://gist.github.com/FezVrasta/57d29cd2bbc4ed80e169780035f748cf)
