@@ -34,6 +34,29 @@ npm install remix-auth-twitch remix-auth
 
 See also [na2hiro/remix-auth-twitter: Remix Auth plugin for Twitter OAuth 1.0a](https://github.com/na2hiro/remix-auth-twitter)
 
+```typescript
+authenticator.use(
+  new TwitchStrategy(
+    {
+      clientId,
+      clientSecret,
+      callbackURL: 'http://localhost:3000/login/callback',
+      includeEmail: true,
+    },
+    async ({profile}) => {
+      return {
+        id: profile.id,
+        screen_name: profile.display_name,
+        name: profile.login,
+        email: profile.email,
+      }
+    }
+  ),
+  'twitch'
+)
+
+```
+
 ## Related
 
 - [@na2hiro](https://github.com/na2hiro) [remix-auth-twitter: Remix Auth plugin for Twitter OAuth 1.0a](https://github.com/na2hiro/remix-auth-twitter)
