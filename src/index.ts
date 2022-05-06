@@ -16,7 +16,7 @@ import {
   tokenize,
   TokenResult,
 } from "./twitch";
-import { isCallback } from "./util";
+import { getCSRFToken, isCallback } from "./util";
 
 export type TwitchProfile = Profile;
 
@@ -74,7 +74,7 @@ export class TwitchStrategy<User> extends Strategy<
         callbackURL: this.callbackURL,
       })
     ) {
-      this.csrfToken = "123";
+      this.csrfToken = getCSRFToken();
       throw authorize({
         clientId: this.clientId,
         callbackURL: this.callbackURL,
