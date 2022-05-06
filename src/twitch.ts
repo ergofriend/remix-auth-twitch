@@ -1,5 +1,3 @@
-import { redirect } from "@remix-run/server-runtime";
-
 const requestAuthorizeURL = "https://id.twitch.tv/oauth2/authorize";
 const requestTokenURL = "https://id.twitch.tv/oauth2/token";
 const requestUserURL = "https://api.twitch.tv/helix/users";
@@ -25,7 +23,7 @@ export const authorize = ({
     redirect_uri: callbackURL,
     ...(csrfToken ? { state: csrfToken } : {}),
   });
-  return redirect(`${requestAuthorizeURL}?${params.toString()}`);
+  return `${requestAuthorizeURL}?${params.toString()}`;
 };
 
 type AuthorizedParams = {

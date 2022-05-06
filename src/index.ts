@@ -1,6 +1,7 @@
 import {
   AppLoadContext,
   json,
+  redirect,
   SessionStorage,
 } from "@remix-run/server-runtime";
 import {
@@ -27,7 +28,8 @@ export type TwitchStrategyOptions = {
   includeEmail?: boolean;
 };
 
-export type TwitchStrategyVerifyParams = TokenResult & {
+export type TwitchStrategyVerifyParams = {
+  token: TokenResult;
   profile: Profile;
   context?: AppLoadContext;
 };
@@ -74,11 +76,16 @@ export class TwitchStrategy<User> extends Strategy<
     ) {
       const csrfToken = getCSRFToken();
       session.set(`${options.sessionKey}:csrfToken`, csrfToken);
-      throw authorize({
+      const url = authorize({
         clientId: this.clientId,
         callbackURL: this.callbackURL,
         scopes: this.includeEmail ? ["user:read:email"] : [],
         csrfToken: csrfToken,
+      });
+      throw redirect(url, {
+        headers: {
+          "Set-Cookie": await sessionStorage.commitSession(session),
+        },
       });
     }
     const authorizedParams = getAuthorizedParams(request.url);
@@ -113,16 +120,20 @@ export class TwitchStrategy<User> extends Strategy<
       accessToken: token.access_token,
     });
 
-    try {
-      const user = await this.verify({
-        ...token,
-        profile,
-        context: options.context,
-      });
-      return await this.success(user, request, sessionStorage, options);
-    } catch (error) {
-      const message = (error as Error).message;
-      return await this.failure(message, request, sessionStorage, options);
-    }
+    const verifiedUser = await this.verify({
+      token,
+      profile,
+      context: options.context,
+    }).catch(() => null);
+
+    if (!verifiedUser)
+      return await this.failure(
+        "failed verify TwitchStrategyVerifyParams",
+        request,
+        sessionStorage,
+        options
+      );
+
+    return await this.success(verifiedUser, request, sessionStorage, options);
   }
 }
