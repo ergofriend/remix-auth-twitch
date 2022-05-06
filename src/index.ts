@@ -43,8 +43,6 @@ export class TwitchStrategy<User> extends Strategy<
   protected callbackURL: string;
   protected includeEmail: boolean;
 
-  private csrfToken = "";
-
   constructor(
     options: TwitchStrategyOptions,
     verify: StrategyVerifyCallback<User, TwitchStrategyVerifyParams>
@@ -74,16 +72,19 @@ export class TwitchStrategy<User> extends Strategy<
         callbackURL: this.callbackURL,
       })
     ) {
-      this.csrfToken = getCSRFToken();
+      const csrfToken = getCSRFToken();
+      session.set(`${options.sessionKey}:csrfToken`, csrfToken);
       throw authorize({
         clientId: this.clientId,
         callbackURL: this.callbackURL,
         scopes: this.includeEmail ? ["user:read:email"] : [],
-        csrfToken: this.csrfToken,
+        csrfToken: csrfToken,
       });
     }
     const authorizedParams = getAuthorizedParams(request.url);
-    if (this.csrfToken !== authorizedParams.state)
+    if (
+      session.get(`${options.sessionKey}:csrfToken`) !== authorizedParams.state
+    )
       throw json(
         { message: "/authorize returned invalid CSRF Token" },
         {
