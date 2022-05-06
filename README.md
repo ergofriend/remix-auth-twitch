@@ -1,19 +1,19 @@
-# Strategy Name
+# Remix Auth Twitch
 
-<!-- Description -->
+Remix Auth plugin for Twitch
+
+[Authentication | Twitch Developers](https://dev.twitch.tv/docs/authentication)
 
 ## Supported runtimes
 
-| Runtime    | Has Support                      |
-| ---------- | -------------------------------- |
-| Node.js    | ✅                               |
-| Cloudflare | Please try and tell me it works. |
-
-<!-- If it doesn't support one runtime, explain here why -->
+| Runtime    | Has Support                           |
+| ---------- | ------------------------------------- |
+| Node.js    | ✅                                    |
+| Cloudflare | Please try and tell me that it works. |
 
 ## How to use
 
-<!-- Explain how to use the strategy, here you should tell what options it expects from the developer when instantiating the strategy -->
+TODO
 
 ## Related
 
