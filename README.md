@@ -13,7 +13,24 @@ Remix Auth plugin for Twitch
 
 ## How to use
 
-TODO
+### Installation
+
+Install remix-auth-twitch npm module along with remix-auth:
+
+npm install remix-auth-twitch remix-auth
+
+### Prerequisites
+
+- Your app is registered to Twitch and has consumer key and secret issued https://dev.twitch.tv/docs/authentication/register-app
+- Your app has [remix-auth](https://github.com/sergiodxa/remix-auth) set up and `authenticator` is provided:
+  ```typescript
+  // app/services/auth.server.ts
+  export let authenticator = ...;
+  ```
+
+### Add remix project
+
+See also [na2hiro/remix-auth-twitter: Remix Auth plugin for Twitter OAuth 1.0a](https://github.com/na2hiro/remix-auth-twitter)
 
 ## Related
 
