@@ -17,7 +17,9 @@ Remix Auth plugin for Twitch
 
 Install remix-auth-twitch npm module along with remix-auth:
 
+```
 npm install remix-auth-twitch remix-auth
+```
 
 ### Prerequisites
 
