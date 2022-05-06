@@ -18,12 +18,14 @@ import {
 } from "./twitch";
 import { isCallback } from "./util";
 
-export interface TwitchStrategyOptions {
+export type TwitchProfile = Profile;
+
+export type TwitchStrategyOptions = {
   clientId: string;
   clientSecret: string;
   callbackURL: string;
   includeEmail?: boolean;
-}
+};
 
 export type TwitchStrategyVerifyParams = TokenResult & {
   profile: Profile;
