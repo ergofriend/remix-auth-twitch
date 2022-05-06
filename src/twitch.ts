@@ -4,15 +4,14 @@ const requestAuthorizeURL = "https://id.twitch.tv/oauth2/authorize";
 const requestTokenURL = "https://id.twitch.tv/oauth2/token";
 const requestUserURL = "https://api.twitch.tv/helix/users";
 
+// https://dev.twitch.tv/docs/authentication/getting-tokens-oauth/#authorization-code-grant-flow
+
 type AuthorizeProps = {
   clientId: string;
   callbackURL: string;
   scopes: string[];
   csrfToken?: string;
 };
-
-// https://dev.twitch.tv/docs/authentication/getting-tokens-oauth/#authorization-code-grant-flow
-
 export const authorize = ({
   clientId,
   callbackURL,
@@ -71,7 +70,13 @@ type TokenizeProps = {
   clientId: string;
   clientSecret: string;
 };
-
+export type TokenResult = {
+  access_token: string;
+  expires_in: number;
+  refresh_token: string;
+  scope: string[];
+  token_type: string;
+};
 export const tokenize = async ({
   code,
   callbackURL,
@@ -96,19 +101,11 @@ export const tokenize = async ({
   const token = (await result.json()) as unknown as TokenResult;
   return token;
 };
-export type TokenResult = {
-  access_token: string;
-  expires_in: number;
-  refresh_token: string;
-  scope: string[];
-  token_type: string;
-};
 
 type getAuthorizedUserProps = {
   clientId: string;
   accessToken: string;
 };
-
 export const getAuthorizedUser = async ({
   clientId,
   accessToken,
