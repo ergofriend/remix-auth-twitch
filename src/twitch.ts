@@ -23,7 +23,7 @@ export const authorize = ({
     scope: scopes.join(" "),
     client_id: clientId,
     redirect_uri: callbackURL,
-    ...(csrfToken ? { code: csrfToken } : {}),
+    ...(csrfToken ? { state: csrfToken } : {}),
   });
   return redirect(`${requestAuthorizeURL}?${params.toString()}`);
 };
