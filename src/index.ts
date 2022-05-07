@@ -69,19 +69,21 @@ export class TwitchStrategy<User> extends Strategy<
 
     // Step 1: Redirect Twitch Authentication Page
     if (
+      // Step 1-1: check if login path, redirect to Twitch Authentication Page
       !isCallback({
         requestURL: request.url,
         callbackURL: this.callbackURL,
       })
     ) {
       const csrfToken = getCSRFToken();
-      session.set(`${options.sessionKey}:csrfToken`, csrfToken);
       const url = authorize({
         clientId: this.clientId,
         callbackURL: this.callbackURL,
         scopes: this.includeEmail ? ["user:read:email"] : [],
         csrfToken: csrfToken,
       });
+      // Step 1-2: csrfToken save to session
+      session.set(`${options.sessionKey}:csrfToken`, csrfToken);
       throw redirect(url, {
         headers: {
           "Set-Cookie": await sessionStorage.commitSession(session),
@@ -89,6 +91,7 @@ export class TwitchStrategy<User> extends Strategy<
       });
     }
     const authorizedParams = getAuthorizedParams(request.url);
+    // Step 1-3: check csrfToken
     if (
       session.get(`${options.sessionKey}:csrfToken`) !== authorizedParams.state
     )
@@ -98,6 +101,7 @@ export class TwitchStrategy<User> extends Strategy<
           status: 401,
         }
       );
+    // Step 1-4: check valid redirected params
     if (!authorizedParams.result.code || authorizedParams.error.error)
       return await this.failure(
         "Please authorize the app",
