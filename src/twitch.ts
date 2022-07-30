@@ -1,6 +1,7 @@
 const requestAuthorizeURL = "https://id.twitch.tv/oauth2/authorize";
 const requestTokenURL = "https://id.twitch.tv/oauth2/token";
 const requestUserURL = "https://api.twitch.tv/helix/users";
+const validateTokenURL = "https://id.twitch.tv/oauth2/validate";
 
 // https://dev.twitch.tv/docs/authentication/getting-tokens-oauth/#authorization-code-grant-flow
 
@@ -139,3 +140,42 @@ export type Profile = {
   // Returned if the request includes the user:read:email scope.
   email?: string;
 };
+
+// fix: https://github.com/ergofriend/remix-auth-twitch/issues/1
+// ref: https://dev.twitch.tv/docs/authentication/validate-tokens
+type ValidateProps = {
+  token: string;
+};
+type ValidTokenResponse = {
+  client_id: string;
+  login: string;
+  scopes: string[];
+  user_id: number;
+  expires_in: number;
+};
+type InvalidTokenResponse = {
+  status: 401;
+  message: "invalid access token";
+};
+export const validateToken = async ({
+  token,
+}: ValidateProps): Promise<ValidTokenResponse | InvalidTokenResponse> => {
+  const response = await fetch(validateTokenURL, {
+    method: "GET",
+    headers: {
+      Authorization: `OAuth ${token}`,
+    },
+  });
+  const data = (await response.json()) as unknown as
+    | ValidTokenResponse
+    | InvalidTokenResponse;
+
+  if (isInvalidToken(data)) throw new Error("Invalid token");
+
+  return data;
+};
+const isInvalidToken = (res: unknown): res is InvalidTokenResponse =>
+  typeof res === "object" &&
+  res !== null &&
+  typeof (res as InvalidTokenResponse).status === "number" &&
+  typeof (res as InvalidTokenResponse).message === "string";

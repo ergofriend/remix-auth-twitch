@@ -16,6 +16,7 @@ import {
   Profile,
   tokenize,
   TokenResult,
+  validateToken,
 } from "./twitch";
 import { getCSRFToken, isCallback } from "./util";
 
@@ -117,6 +118,18 @@ export class TwitchStrategy<User> extends Strategy<
       clientId: this.clientId,
       clientSecret: this.clientSecret,
     });
+
+    // Step 2.5: Validate Access Token
+    try {
+      await validateToken({ token: token.access_token });
+    } catch {
+      return await this.failure(
+        "failed validating Twitch Access Token",
+        request,
+        sessionStorage,
+        options
+      );
+    }
 
     // Step 3: Get Profile
     const profile = await getAuthorizedUser({
