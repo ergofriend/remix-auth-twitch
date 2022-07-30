@@ -153,4 +153,6 @@ export class TwitchStrategy<User> extends Strategy<
 
     return await this.success(verifiedUser, request, sessionStorage, options);
   }
+
+  validate = validateToken;
 }
