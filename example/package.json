@@ -8,7 +8,7 @@
     "dev": "npm-run-all build --parallel \"dev:*\"",
     "start": "cross-env NODE_ENV=production npm run wrangler",
     "typecheck": "tsc",
-    "wrangler": "wrangler pages dev ./public"
+    "wrangler": "wrangler pages dev ./public --port 3000"
   },
   "dependencies": {
     "@remix-run/cloudflare": "^1.16.1",
@@ -18,7 +18,10 @@
     "cross-env": "^7.0.3",
     "isbot": "^3.6.8",
     "react": "^18.2.0",
-    "react-dom": "^18.2.0"
+    "react-dom": "^18.2.0",
+    "remix-auth": "^3.4.0",
+    "remix-auth-twitch": "^1.1.0",
+    "tiny-invariant": "^1.3.1"
   },
   "devDependencies": {
     "@cloudflare/workers-types": "^3.19.0",
