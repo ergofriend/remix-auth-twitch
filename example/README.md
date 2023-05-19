@@ -1,5 +1,7 @@
 # Demo project for remix-auth-twitch
 
+https://remix-auth-twitch.pages.dev/
+
 ## Environment variables
 
 ```sh

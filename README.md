@@ -1,15 +1,19 @@
 # Remix Auth Twitch
 
-Remix Auth plugin for Twitch
+Demo app: https://remix-auth-twitch.pages.dev/
+
+see also [example/README.md](example/README.md)
+
+## Remix Auth plugin for Twitch
 
 [Authentication | Twitch Developers](https://dev.twitch.tv/docs/authentication)
 
 ## Supported runtimes
 
-| Runtime    | Has Support                           |
-| ---------- | ------------------------------------- |
-| Node.js    | ✅                                    |
-| Cloudflare | Please try and tell me that it works. |
+| Runtime    | Has Support |
+| ---------- | ----------- |
+| Node.js    | ✅          |
+| Cloudflare | ✅          |
 
 ## How to use
 
@@ -35,13 +39,13 @@ npm install remix-auth-twitch remix-auth
 See also [na2hiro/remix-auth-twitter: Remix Auth plugin for Twitter OAuth 1.0a](https://github.com/na2hiro/remix-auth-twitter)
 
 ```typescript
-const twitchClientId = process.env.TWITCH_API_CLIENT;
-const twitchClientSecret = process.env.TWITCH_API_SECRET;
+const twitchClientId = process.env.TWITCH_API_CLIENT
+const twitchClientSecret = process.env.TWITCH_API_SECRET
 const twitchStrategy = new TwitchStrategy(
   {
     clientId: twitchClientId,
     clientSecret: twitchClientSecret,
-    callbackURL: "http://localhost:3000/login/callback",
+    callbackURL: 'http://localhost:3000/login/callback',
     includeEmail: true,
   },
   async ({ profile, token }) => {
@@ -51,10 +55,10 @@ const twitchStrategy = new TwitchStrategy(
       name: profile.login,
       email: profile.email,
       accessToken: token.access_token,
-    };
+    }
   }
-);
-authenticator.use(twitchStrategy, "twitch");
+)
+authenticator.use(twitchStrategy, 'twitch')
 ```
 
 ### [Validating Tokens | Twitch Developers](https://dev.twitch.tv/docs/authentication/validate-tokens)
@@ -65,9 +69,9 @@ First Validation is build-in TwitchStrategy, but Your application must validate 
 
 ```ts
 try {
-  await twitchStrategy.validate({ token: accessToken });
+  await twitchStrategy.validate({ token: accessToken })
 } catch {
-  authenticator.logout(request, { redirectTo: "/login" });
+  authenticator.logout(request, { redirectTo: '/login' })
 }
 ```
 
