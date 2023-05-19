@@ -5,14 +5,20 @@ import {authenticator} from './auth.server'
 
 let twitchStrategy: TwitchStrategy<AuthUser> | null = null
 
-export const initTwitchStrategy = ({clientID, clientSecret}: {clientID: string; clientSecret: string}) => {
+type TwitchStrategyOptions = {
+  clientId: string
+  clientSecret: string
+  callbackURL: string
+}
+
+export const initTwitchStrategy = ({clientId, clientSecret, callbackURL }: TwitchStrategyOptions) => {
   if (twitchStrategy) return authenticator
 
   twitchStrategy = new TwitchStrategy<AuthUser>(
     {
-      clientId: clientID,
+      clientId,
       clientSecret,
-      callbackURL: 'http://localhost:3000/auth/twitch/callback',
+      callbackURL,
       includeEmail: true,
     },
     async ({profile}) => {

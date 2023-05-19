@@ -17,12 +17,16 @@ export const initAuth = (env: Env) => {
   const {
     TWITCH_API_CLIENT,
     TWITCH_API_SECRET,
+    TWITCH_CALLBACK_URL,
   } = env
 
   invariant(TWITCH_API_CLIENT, 'TWITCH_API_CLIENT must be provided')
   invariant(TWITCH_API_SECRET, 'TWITCH_API_SECRET must be provided')
+  invariant(TWITCH_CALLBACK_URL, 'TWITCH_CALLBACK_URL must be provided')
+
   initTwitchStrategy({
-    clientID: TWITCH_API_CLIENT,
+    clientId: TWITCH_API_CLIENT,
     clientSecret: TWITCH_API_SECRET,
+    callbackURL: TWITCH_CALLBACK_URL
   })
 }
