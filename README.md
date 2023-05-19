@@ -23,6 +23,8 @@ Install remix-auth-twitch npm module along with remix-auth:
 
 ```
 npm install remix-auth-twitch remix-auth
+
+yarn add remix-auth-twitch remix-auth
 ```
 
 ### Prerequisites
