@@ -7,6 +7,7 @@ touch .dev.vars
 
 TWITCH_API_CLIENT=xxx
 TWITCH_API_SECRET=xxx
+TWITCH_CALLBACK_URL=http://localhost:3000/auth/twitch/callback
 ```
 
 ## Run
