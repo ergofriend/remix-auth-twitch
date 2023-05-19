@@ -1,6 +1,6 @@
 import type { FC } from 'react'
 
-import { Form } from '@remix-run/react'
+import { Form, Link } from '@remix-run/react'
 
 import type { AuthUser } from '~/services/auth.server'
 
@@ -19,7 +19,13 @@ export const Auth: FC<Props> = ({ user }) => {
 
   return (
     <div>
-      <p>Logged in as {user.displayName}</p>
+      <h2>Logged in as {user.displayName}</h2>
+      <p>
+        You can remove the link to this application at{' '}
+        <Link to={'https://www.twitch.tv/settings/connections'}>
+          https://www.twitch.tv/settings/connections
+        </Link>
+      </p>
 
       <Form replace method='post' action='/auth/logout'>
         <button className=''>Logout</button>
