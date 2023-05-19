@@ -29,6 +29,14 @@ export default function Page() {
             ergofriend/remix-auth-twitch: Remix Auth Plugin for Twitch
           </Link>
         </li>
+        <li>
+          <Link
+            className='text-blue-200 underline'
+            to='https://www.npmjs.com/package/remix-auth-twitch'
+          >
+            remix-auth-twitch - npm
+          </Link>
+        </li>
       </ul>
 
       <p className='text-blue-300'>
