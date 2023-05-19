@@ -5,4 +5,5 @@
 declare type Env = {
   TWITCH_API_CLIENT?: string
   TWITCH_API_SECRET?: string
+  TWITCH_CALLBACK_URL?: string
 }
