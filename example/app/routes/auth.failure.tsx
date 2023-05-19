@@ -6,7 +6,7 @@ export default function LoginFailure() {
       <h1>Login Failure</h1>
       <p>
         Login failed. Please try again.
-        <Form replace method='post' action='/auth/login'>
+        <Form replace method='post' action='/auth/twitch'>
           <button className='btn btn-outline btn-success'>Login</button>
         </Form>
       </p>
