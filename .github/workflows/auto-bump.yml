@@ -50,6 +50,3 @@ jobs:
 
       - name: Enable auto-merge
         run: gh pr merge --merge --auto "${{ steps.cpr.outputs.pull-request-url }}"
-
-      - name: Approve request
-        run: gh pr comment "${{ steps.cpr.outputs.pull-request-url }}" --body "@github-actions approve me"
