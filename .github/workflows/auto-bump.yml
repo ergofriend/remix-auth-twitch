@@ -46,7 +46,7 @@ jobs:
         with:
           title: bump version to ${{ env.NEW_VERSION }}
           body: from ${{ env.CURRENT_VERSION }} to ${{ env.NEW_VERSION }}
-          assignees: '${{ github.actor }}'
+          reviewers: '${{ github.actor }}'
 
       - name: Enable auto-merge
         run: gh pr merge --merge --auto "${{ steps.cpr.outputs.pull-request-url }}"
