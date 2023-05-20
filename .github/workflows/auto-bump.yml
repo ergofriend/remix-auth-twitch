@@ -1,0 +1,46 @@
+name: auto bump version
+on:
+  workflow_dispatch:
+    inputs:
+      newversion:
+        description: 'npm version [<newversion> | major | minor | patch | premajor | preminor | prepatch | prerelease | from-git]'
+        required: true
+      preid:
+        description: 'The "prerelease identifier" to use as a prefix for the "prerelease" part of a semver.'
+        required: false
+
+permissions:
+  pull-requests: write
+  contents: write
+
+jobs:
+  bump:
+    name: Bump
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup Git
+        run: |
+          git config user.name '${{ secrets.GIT_USER_NAME }}'
+          git config user.email '${{ secrets.GIT_USER_EMAIL }}'
+
+      - name: Bump version
+        run: |
+          npm version ${{ inputs.newversion }} --preid ${{ inputs.preid }} --git-tag-version false
+      - name: Commit
+        run: "git commit -am 'Bump version to $(jq -r .version < package.json)'"
+
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v5
+        id: cpr
+      - name: Check outputs
+        if: ${{ steps.cpr.outputs.pull-request-number }}
+        run: |
+          echo "Pull Request Number - ${{ steps.cpr.outputs.pull-request-number }}"
+          echo "Pull Request URL - ${{ steps.cpr.outputs.pull-request-url }}"
+
+      - name: Approve a PR
+        run: gh pr review --approve "${{ steps.cpr.outputs.pull-request-url }}"
+      - name: Enable auto-merge
+        run: gh pr merge --merge --auto "${{ steps.cpr.outputs.pull-request-url }}"
