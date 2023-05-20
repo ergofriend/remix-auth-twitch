@@ -53,7 +53,8 @@ jobs:
           echo "Pull Request Number - ${{ steps.cpr.outputs.pull-request-number }}"
           echo "Pull Request URL - ${{ steps.cpr.outputs.pull-request-url }}"
 
-      - name: Approve a PR
-        run: gh pr review --approve "${{ steps.cpr.outputs.pull-request-url }}"
       - name: Enable auto-merge
         run: gh pr merge --merge --auto "${{ steps.cpr.outputs.pull-request-url }}"
+
+      - name: Approve request
+        run: gh pr comment "${{ steps.cpr.outputs.pull-request-url }}" --body "@github-actions approve me"
