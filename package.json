@@ -9,7 +9,7 @@
     "type": "git",
     "url": "git+https://github.com/ergofriend/remix-auth-twitch.git"
   },
-  "homepage": "https://github.com/ergofriend/remix-auth-twitch#readme",
+  "homepage": "https://remix-auth-twitch.pages.dev/",
   "scripts": {
     "build": "tsc --project tsconfig.json",
     "typecheck": "tsc --project tsconfig.json --noEmit",
