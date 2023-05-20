@@ -19,10 +19,10 @@ export const authorize = ({
 }: AuthorizeProps) => {
   const params = new URLSearchParams({
     response_type: "code",
-    scope: scopes.join(" "),
     client_id: clientId,
     redirect_uri: callbackURL,
     ...(csrfToken ? { state: csrfToken } : {}),
+    ...(scopes.length > 0 ? { scope: scopes.join(" ") } : {}),
   });
   return `${requestAuthorizeURL}?${params.toString()}`;
 };
