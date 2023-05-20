@@ -1,4 +1,4 @@
-name: auto bump version
+name: Auto Bump Version
 on:
   workflow_dispatch:
     inputs:
