@@ -1,0 +1,22 @@
+name: Approve me
+# https://zenn.dev/hkusu/articles/9b0255084f4cba
+
+on:
+  issue_comment:
+    types: [created, edited]
+
+jobs:
+  approve:
+    name: Approve
+    if: |
+      github.event.issue.state == 'open' &&
+      github.event.issue.pull_request != null &&
+      contains(github.event.comment.body, '@github-actions approve me') &&
+      (github.event.action != 'edited' || (github.event.action == 'edited' && !contains(github.event.changes.body.from, '@github-actions approve me')))
+    runs-on: ubuntu-latest
+    steps:
+      - name: Approve pull request
+        env:
+          GH_REPO: ${{ github.repository }}
+          GH_TOKEN: ${{ github.token }}
+        run: gh pr review ${{ github.event.issue.number }} --approve
