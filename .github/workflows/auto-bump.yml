@@ -27,22 +27,34 @@ jobs:
           git config user.name '${{ secrets.GIT_USER_NAME }}'
           git config user.email '${{ secrets.GIT_USER_EMAIL }}'
 
+      - name: Current version
+        run: echo "CURRENT_VERSION=$(jq -r .version < package.json)"" >> $GITHUB_PATH
+
       - name: Bump version
         run: |
           npm version ${{ inputs.newversion }} --preid ${{ inputs.preid }} --git-tag-version false
       - name: Commit
         run: "git commit -am 'Bump version to $(jq -r .version < package.json)'"
 
+      - name: New version
+        run: echo "NEW_VERSION=$(jq -r .version < package.json)"" >> $GITHUB_PATH
+
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v5
         id: cpr
+        with:
+          title: bump version to $(jq -r .version < package.json)
+          body: from ${{ env.CURRENT_VERSION }} to ${{ env.NEW_VERSION }}
+          assignees: '${{ github.actor }}'
+
       - name: Check outputs
         if: ${{ steps.cpr.outputs.pull-request-number }}
         run: |
           echo "Pull Request Number - ${{ steps.cpr.outputs.pull-request-number }}"
           echo "Pull Request URL - ${{ steps.cpr.outputs.pull-request-url }}"
 
-      - name: Approve a PR
-        run: gh pr review --approve "${{ steps.cpr.outputs.pull-request-url }}"
       - name: Enable auto-merge
         run: gh pr merge --merge --auto "${{ steps.cpr.outputs.pull-request-url }}"
+
+      - name: Approve request
+        run: gh pr comment "${{ steps.cpr.outputs.pull-request-url }}" --body "@github-actions approve me"
