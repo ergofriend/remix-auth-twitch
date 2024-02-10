@@ -27,6 +27,7 @@ export type TwitchStrategyOptions = {
   clientSecret: string;
   callbackURL: string;
   includeEmail?: boolean;
+  scopes?: string[];
 };
 
 export type TwitchStrategyVerifyParams = {
@@ -45,6 +46,7 @@ export class TwitchStrategy<User> extends Strategy<
   protected clientSecret: string;
   protected callbackURL: string;
   protected includeEmail: boolean;
+  protected scopes: string[];
 
   constructor(
     options: TwitchStrategyOptions,
@@ -55,6 +57,7 @@ export class TwitchStrategy<User> extends Strategy<
     this.clientSecret = options.clientSecret;
     this.callbackURL = options.callbackURL;
     this.includeEmail = options.includeEmail || false;
+    this.scopes = options.scopes || [];
   }
 
   async authenticate(
@@ -80,7 +83,9 @@ export class TwitchStrategy<User> extends Strategy<
       const url = authorize({
         clientId: this.clientId,
         callbackURL: this.callbackURL,
-        scopes: this.includeEmail ? ["user:read:email"] : [],
+        scopes: this.includeEmail
+          ? ["user:read:email", ...this.scopes]
+          : this.scopes,
         csrfToken: csrfToken,
       });
       // Step 1-2: csrfToken save to session
